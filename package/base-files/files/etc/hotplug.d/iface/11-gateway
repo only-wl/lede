@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+[ "$ACTION" = ifup ] || exit 0
+[ "$INTERFACE" = lan ] || exit 0
+LAN="$(uci_get network.lan.ipaddr)"
+URL="$(grep "/hiwifi.com/" /etc/config/dhcp)"
+if [ -n "$URL" ]; then
+  sed -i "s@list address '/hiwifi.com/.*'@list address '/hiwifi.com/$LAN'@" /etc/config/dhcp
+  /etc/init.d/dnsmasq restart
+fi
+
+exit 0
